@@ -1,11 +1,15 @@
 import React from 'react';
-import StockQuote from "./components/StockQuote";
+import ChatBot from "./components/ChatBot";
+// import PdfTextExtractor from './components/ExtractText';
 
-function App(props) {
+function App({siteURL}) {
+
+  console.log('siteURL',siteURL)
 
   return (
     <div>
-      <StockQuote symbol={props.symbol}/>
+      <ChatBot siteURL={siteURL} />
+      {/* <PdfTextExtractor/> */}
     </div>
   );
 }
