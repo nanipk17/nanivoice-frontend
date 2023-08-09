@@ -6,31 +6,39 @@ import { BsFillChatLeftFill } from 'react-icons/bs'
 import { LiaAngleDoubleDownSolid } from 'react-icons/lia'
 import useAudioRecorder from '../hooks/recordAudio'
 
+// let  base = 'http://localhost:3000'
 const base = 'https://justvoicebackend-vrtx.vercel.app'
 
 // FULL BOT CONTEXT
+const defaultContextSchema = {
+  role: 'system',
+  content:
+    'میں یہاں آپ کے سوالات میں مدد کرنے کے لئے نانی ڈاٹ پی کے اے آئی اسسٹنٹ ہوں. آپ مجھ سے ہماری مصنوعات اور خدمات کے بارے میں کچھ پوچھ سکتے ہیں.',
+}
 
 let mediaRecorder = null
-const Chatbot = ({ siteURL }) => {
-  const defaultContextSchema = {
-    role: 'system',
-    content: `I am an AI Assistant of ${siteURL}  here to help you with your queries. You can ask me anything about our products and services.`,
-  }
+const ChatbotTest = ({ siteURL }) => {
   const [messagesArray, setMessagesArray] = useState([defaultContextSchema])
   const [products, setProducts] = useState([])
   const [prompt, setPrompt] = useState('')
   const [isBlocked, setIsBlocked] = useState(false)
   const [chatOpened, setChatOpened] = useState(false)
+  const [record, setRecord] = useState(false) // state to control recording
+  const [audioBlob, setAudioBlob] = useState(null)
   const {
     startRecording,
     stopRecording,
     togglePauseResume,
-
     recordingBlob,
     isRecording,
     isPaused,
     recordingTime,
   } = useAudioRecorder()
+
+  // function to handle the recorded blob
+  const handleStop = (blob) => {
+    setAudioBlob(blob)
+  }
 
   const handleStartRecording = () => {
     startRecording()
@@ -45,6 +53,10 @@ const Chatbot = ({ siteURL }) => {
     handleAudioRecordingComplete(recordingBlob)
   }, [recordingBlob])
 
+  const handlePauseResumeRecording = () => {
+    togglePauseResume()
+  }
+
   const handleAudioRecordingComplete = async (audioBlob) => {
     console.log('packet sent')
     try {
@@ -53,7 +65,8 @@ const Chatbot = ({ siteURL }) => {
       // formData.append('model', 'whisper-1')
       formData.append('language', 'en')
 
-      let voiceapi = base + '/api/voicechat'
+      base = 'http://localhost:3000'
+      let voiceapi = base + '/api/gcloud/speech2text'
 
       const response = await fetch(voiceapi, {
         method: 'POST',
@@ -62,10 +75,10 @@ const Chatbot = ({ siteURL }) => {
 
       if (response.ok) {
         console.log('Audio sent to the API successfully.')
-        const { text, error } = await response.json()
-        updateMessagesArray(text)
+        const { transcription } = await response.json()
+        updateMessagesArray(transcription)
 
-        console.log('response', text)
+        console.log('response', transcription)
       } else {
         console.error('Failed to send audio to the API.')
       }
@@ -85,7 +98,7 @@ const Chatbot = ({ siteURL }) => {
 
     const requestBody = {
       text: textInput,
-      model_id: 'eleven_monolingual_v1',
+      model_id: 'eleven_multilingual_v1',
       voice_settings: {
         stability: 0,
         similarity_boost: 0,
@@ -147,6 +160,7 @@ const Chatbot = ({ siteURL }) => {
         textInput: messagesArray[messagesArray.length - 1].content,
         siteURL: 'nani.pk',
       }
+
 
       const apiUrl = base + '/api/chatgpt/openai'
 
@@ -274,4 +288,4 @@ const Chatbot = ({ siteURL }) => {
   )
 }
 
-export default Chatbot
+export default ChatbotTest
