@@ -1,6 +1,7 @@
 import React from 'react';
 import ChatBot from "./components/ChatBot";
 import ChatbotTest from './components/UrduBot';
+import Chatbot from './components/ChatBot';
 // import PdfTextExtractor from './components/ExtractText';
 
 function App({siteURL}) {
@@ -9,10 +10,11 @@ function App({siteURL}) {
 
   return (
     <div>
-      <ChatbotTest siteURL={siteURL} />
+      {/* <ChatbotTest siteURL={siteURL} /> */}
+      <Chatbot siteURL={siteURL} />
       {/* <PdfTextExtractor/> */}
     </div>
-  );
+  )
 }
 
 export default App;

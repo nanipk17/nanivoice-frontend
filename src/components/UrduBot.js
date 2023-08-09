@@ -15,6 +15,7 @@ const defaultContextSchema = {
   content:
     'میں یہاں آپ کے سوالات میں مدد کرنے کے لئے نانی ڈاٹ پی کے اے آئی اسسٹنٹ ہوں. آپ مجھ سے ہماری مصنوعات اور خدمات کے بارے میں کچھ پوچھ سکتے ہیں.',
 }
+ let newbase = 'http://localhost:3000'
 
 let mediaRecorder = null
 const ChatbotTest = ({ siteURL }) => {
@@ -36,9 +37,7 @@ const ChatbotTest = ({ siteURL }) => {
   } = useAudioRecorder()
 
   // function to handle the recorded blob
-  const handleStop = (blob) => {
-    setAudioBlob(blob)
-  }
+ 
 
   const handleStartRecording = () => {
     startRecording()
@@ -46,27 +45,24 @@ const ChatbotTest = ({ siteURL }) => {
 
   const handleStopRecording = async () => {
     stopRecording()
-    console.log('hii')
   }
 
   useEffect(() => {
     handleAudioRecordingComplete(recordingBlob)
   }, [recordingBlob])
 
-  const handlePauseResumeRecording = () => {
-    togglePauseResume()
-  }
+
 
   const handleAudioRecordingComplete = async (audioBlob) => {
-    console.log('packet sent')
     try {
       const formData = new FormData()
       formData.append('file', audioBlob, 'audio.wav')
       // formData.append('model', 'whisper-1')
       formData.append('language', 'en')
 
-      base = 'http://localhost:3000'
-      let voiceapi = base + '/api/gcloud/speech2text'
+      let newbase = 'http://localhost:3000'
+      let voiceapi = newbase + '/api/gcloud/s2tURL'
+      // let voiceapi = base+ '/api/gcloud/speech2text'
 
       const response = await fetch(voiceapi, {
         method: 'POST',
@@ -74,11 +70,9 @@ const ChatbotTest = ({ siteURL }) => {
       })
 
       if (response.ok) {
-        console.log('Audio sent to the API successfully.')
         const { transcription } = await response.json()
         updateMessagesArray(transcription)
 
-        console.log('response', transcription)
       } else {
         console.error('Failed to send audio to the API.')
       }
@@ -87,43 +81,29 @@ const ChatbotTest = ({ siteURL }) => {
     }
   }
 
-  const requestVoice = async (textInput) => {
-    let voiceid = '21m00Tcm4TlvDq8ikWAM'
+const requestVoice = async (textInput) => {
+  const url = newbase + '/api/readvoice'
 
-    const baseUrl = 'https://api.elevenlabs.io/v1/text-to-speech'
-    const headers = {
-      'Content-Type': 'application/json',
-      'xi-api-key': '2deb078ea46d326f322b86cb3220bdf8',
-    }
+  try {
+    const res = await fetch(url, {
+      method: 'POST',
+      body: JSON.stringify({ text: textInput, voiceId: 'IKne3meq5aSn9XLyUdCD' }),
+    })
 
-    const requestBody = {
-      text: textInput,
-      model_id: 'eleven_multilingual_v1',
-      voice_settings: {
-        stability: 0,
-        similarity_boost: 0,
-        style: 0.5,
-        use_speaker_boost: true,
-      },
-    }
-    try {
-      const response = await axios.post(`${baseUrl}/${voiceid}`, requestBody, {
-        headers,
-        responseType: 'blob',
+    if (res.status === 200) {
+      const audioBuffer = await res.arrayBuffer()
+      const audioContext = new AudioContext()
+      const audioBufferSource = audioContext.createBufferSource()
+      audioContext.decodeAudioData(audioBuffer, (buffer) => {
+        audioBufferSource.buffer = buffer
+        audioBufferSource.connect(audioContext.destination)
+        audioBufferSource.start()
       })
-
-      if (response.status === 200) {
-        console.log('hey texted')
-        const audio = new Audio(URL.createObjectURL(response.data))
-        audio.play()
-        return { status: 200, audio }
-      } else {
-        return { status: 405, audio: 'some error' }
-      }
-    } catch (error) {
-      return { status: 400, audio: error }
     }
+  } catch (error) {
+    console.log('error', error)
   }
+}
 
   useEffect(() => {
     if (
@@ -133,9 +113,7 @@ const ChatbotTest = ({ siteURL }) => {
       handleChatRequest()
     }
 
-    console.log('messagesarray', messagesArray)
 
-    console.log('products are', products)
   }, [messagesArray, products])
 
   const updateMessagesArray = (newMessage) => {
@@ -180,19 +158,21 @@ const ChatbotTest = ({ siteURL }) => {
         Cookies.remove(key)
         Cookies.set(key, JSON.stringify(summary))
       } else {
-        console.log('result is', result)
         setProducts(result.result)
-        let result1 = {
-          role: 'user',
-          content: null,
-          result: result.result,
-        }
-        setMessagesArray((prevState) => [...prevState, result1])
+      
+        setMessagesArray((prevState) => [...prevState, result])
         Cookies.remove(key)
         Cookies.set(key, JSON.stringify(summary))
       }
     } catch (error) {
       console.error('Error:', error)
+     const result = {
+       role: 'system',
+       content:
+         'معذرت، میں آپ کے سوال کو سمجھنے کے قابل نہیں ہوں۔ دوبارہ کوشش کریں.',
+     }
+     setMessagesArray((prevState) => [...prevState, result])
+     await requestVoice(result.content)
     }
   }
 
