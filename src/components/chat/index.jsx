@@ -132,7 +132,7 @@ const ChatWidget = ({ siteURL }) => {
       const obj = {
         conversationId: Cookies.get('convoId') ? Cookies.get('convoId') : '',
         textInput: messagesArray[messagesArray.length - 1].content,
-        siteURL: 'nani.pk',
+        siteURL: siteURL,
       }
 
       const apiUrl = base + '/api/chatgpt/openai'

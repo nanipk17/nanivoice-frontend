@@ -12,7 +12,7 @@ function App({siteURL}) {
   return (
     <div>
       {/* <ChatbotTest siteURL={siteURL} /> */}
-      <ChatWidget/>
+      <ChatWidget siteURL={siteURL} />
       {/* <Chatbot siteURL={siteURL} /> */}
       {/* <PdfTextExtractor/> */}
     </div>
