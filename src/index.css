@@ -16,6 +16,8 @@
   color: #000000;
 }
 
+
+
 .chat-container {
   position: fixed;
 
@@ -138,4 +140,48 @@ audio {
 .message-body {
   max-height: 550px;
   overflow-y: auto;
+}
+
+
+.chaticon-urdu {
+  position: fixed;
+  bottom: 30px;
+  right: 40px;
+  background-color: #ffffff; /* White */
+  border-radius: 10px;
+  font-family: Arial, sans-serif;
+  color: #333;
+  cursor: pointer;
+  max-width: 400px;
+  font-size: 50px;
+  color: orangered
+}
+
+.chat-input-button-urdu {
+  background-color: orangered !important; /* Black */
+  color: #ffffff; /* White */
+  border: none;
+  padding: 8px 12px;
+  border-radius: 5px;
+  cursor: pointer;
+}
+
+
+.user-message-urdu .message-bubble-urdu {
+  background-color: #f2f2f2; /* Light Gray */
+  color: black; /* Black */
+  padding: 5px;
+}
+
+.chat-head-urdu {
+  background-color: orangered; /* Black */
+  color: #ffffff !important; /* White */
+  padding: 10px;
+  text-align: center;
+  border-top-left-radius: 10px;
+  border-top-right-radius: 10px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
 }

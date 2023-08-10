@@ -15,7 +15,7 @@ const defaultContextSchema = {
   content:
     'میں یہاں آپ کے سوالات میں مدد کرنے کے لئے نانی ڈاٹ پی کے اے آئی اسسٹنٹ ہوں. آپ مجھ سے ہماری مصنوعات اور خدمات کے بارے میں کچھ پوچھ سکتے ہیں.',
 }
- let newbase = 'http://localhost:3000'
+let newbase = 'http://localhost:3000'
 
 let mediaRecorder = null
 const ChatbotTest = ({ siteURL }) => {
@@ -37,7 +37,6 @@ const ChatbotTest = ({ siteURL }) => {
   } = useAudioRecorder()
 
   // function to handle the recorded blob
- 
 
   const handleStartRecording = () => {
     startRecording()
@@ -51,8 +50,6 @@ const ChatbotTest = ({ siteURL }) => {
     handleAudioRecordingComplete(recordingBlob)
   }, [recordingBlob])
 
-
-
   const handleAudioRecordingComplete = async (audioBlob) => {
     try {
       const formData = new FormData()
@@ -60,8 +57,7 @@ const ChatbotTest = ({ siteURL }) => {
       // formData.append('model', 'whisper-1')
       formData.append('language', 'en')
 
-      let newbase = 'http://localhost:3000'
-      let voiceapi = newbase + '/api/gcloud/s2tURL'
+      let voiceapi = base + '/api/gcloud/s2tURL'
       // let voiceapi = base+ '/api/gcloud/speech2text'
 
       const response = await fetch(voiceapi, {
@@ -72,7 +68,6 @@ const ChatbotTest = ({ siteURL }) => {
       if (response.ok) {
         const { transcription } = await response.json()
         updateMessagesArray(transcription)
-
       } else {
         console.error('Failed to send audio to the API.')
       }
@@ -81,29 +76,32 @@ const ChatbotTest = ({ siteURL }) => {
     }
   }
 
-const requestVoice = async (textInput) => {
-  const url = newbase + '/api/readvoice'
+  const requestVoice = async (textInput) => {
+    const url = base + '/api/readvoice'
 
-  try {
-    const res = await fetch(url, {
-      method: 'POST',
-      body: JSON.stringify({ text: textInput, voiceId: 'IKne3meq5aSn9XLyUdCD' }),
-    })
-
-    if (res.status === 200) {
-      const audioBuffer = await res.arrayBuffer()
-      const audioContext = new AudioContext()
-      const audioBufferSource = audioContext.createBufferSource()
-      audioContext.decodeAudioData(audioBuffer, (buffer) => {
-        audioBufferSource.buffer = buffer
-        audioBufferSource.connect(audioContext.destination)
-        audioBufferSource.start()
+    try {
+      const res = await fetch(url, {
+        method: 'POST',
+        body: JSON.stringify({
+          text: textInput,
+          voiceId: 'IKne3meq5aSn9XLyUdCD',
+        }),
       })
+
+      if (res.status === 200) {
+        const audioBuffer = await res.arrayBuffer()
+        const audioContext = new AudioContext()
+        const audioBufferSource = audioContext.createBufferSource()
+        audioContext.decodeAudioData(audioBuffer, (buffer) => {
+          audioBufferSource.buffer = buffer
+          audioBufferSource.connect(audioContext.destination)
+          audioBufferSource.start()
+        })
+      }
+    } catch (error) {
+      console.log('error', error)
     }
-  } catch (error) {
-    console.log('error', error)
   }
-}
 
   useEffect(() => {
     if (
@@ -112,8 +110,6 @@ const requestVoice = async (textInput) => {
     ) {
       handleChatRequest()
     }
-
-
   }, [messagesArray, products])
 
   const updateMessagesArray = (newMessage) => {
@@ -139,7 +135,6 @@ const requestVoice = async (textInput) => {
         siteURL: 'nani.pk',
       }
 
-
       const apiUrl = base + '/api/chatgpt/openai'
 
       const response = await axios.post(apiUrl, {
@@ -159,20 +154,20 @@ const requestVoice = async (textInput) => {
         Cookies.set(key, JSON.stringify(summary))
       } else {
         setProducts(result.result)
-      
+
         setMessagesArray((prevState) => [...prevState, result])
         Cookies.remove(key)
         Cookies.set(key, JSON.stringify(summary))
       }
     } catch (error) {
       console.error('Error:', error)
-     const result = {
-       role: 'system',
-       content:
-         'معذرت، میں آپ کے سوال کو سمجھنے کے قابل نہیں ہوں۔ دوبارہ کوشش کریں.',
-     }
-     setMessagesArray((prevState) => [...prevState, result])
-     await requestVoice(result.content)
+      const result = {
+        role: 'system',
+        content:
+          'معذرت، میں آپ کے سوال کو سمجھنے کے قابل نہیں ہوں۔ دوبارہ کوشش کریں.',
+      }
+      setMessagesArray((prevState) => [...prevState, result])
+      await requestVoice(result.content)
     }
   }
 
@@ -189,12 +184,12 @@ const requestVoice = async (textInput) => {
   return (
     <>
       {!chatOpened ? (
-        <div onClick={() => setChatOpened(true)} className="chaticon">
+        <div onClick={() => setChatOpened(true)} className="chaticon-urdu">
           <BsFillChatLeftFill />
         </div>
       ) : (
         <div className="chat-container">
-          <div className="chat-head">
+          <div className="chat-head-urdu">
             <h1>{siteURL}</h1>
             <div>
               <LiaAngleDoubleDownSolid
@@ -210,7 +205,9 @@ const requestVoice = async (textInput) => {
                 <div
                   key={index}
                   className={`message-container ${
-                    message.role === 'user' ? 'user-message' : 'bot-message'
+                    message.role === 'user'
+                      ? 'user-message-urdu'
+                      : 'bot-message'
                   }`}
                 >
                   {message.role === 'user' && (
@@ -221,7 +218,7 @@ const requestVoice = async (textInput) => {
                     />
                   )}
 
-                  <div className={`message-bubble ${message.role}`}>
+                  <div className={`message-bubble-urdu ${message.role}`}>
                     <p className="msg-body">{message.content}</p>
                   </div>
 
@@ -251,6 +248,7 @@ const requestVoice = async (textInput) => {
             />
 
             <button
+              className="chat-input-button-urdu"
               onClick={isRecording ? handleStopRecording : handleStartRecording}
             >
               {isRecording ? 'Stop Recording' : 'Start Recording'}
