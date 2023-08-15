@@ -54,10 +54,10 @@ const ChatbotTest = ({ siteURL }) => {
     try {
       const formData = new FormData()
       formData.append('file', audioBlob, 'audio.wav')
-      // formData.append('model', 'whisper-1')
       formData.append('language', 'en')
 
-      let voiceapi = base + '/api/gcloud/s2tURL'
+      let voiceapi = base+ '/api/gcloud/gtest2'
+      // let voiceapi = base+ '/api/gtest'
       // let voiceapi = base+ '/api/gcloud/speech2text'
 
       const response = await fetch(voiceapi, {

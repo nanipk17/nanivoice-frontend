@@ -12,6 +12,7 @@ import 'regenerator-runtime/runtime'
 const widgetDivs = document.querySelectorAll('.justvoice')
 
 // Inject our React App into each class
+// div.dataset.siteurl
 widgetDivs.forEach((div) => {
-  ReactDOM.render(<App siteURL={div.dataset.siteurl} />, div)
+  ReactDOM.render(<App siteURL={'example.com'} />, div)
 })
