@@ -5,16 +5,43 @@ import Input from './input'
 import Body from './body'
 import axios from 'axios'
 
-import Alert from './alert'
 import Cookies from 'js-cookie'
 
-import { BsFillMicMuteFill } from 'react-icons/bs'
 import useAudioRecorder from '../../hooks/recordAudio'
 
-// const base = 'http://localhost:3000'
-const base = 'https://justvoicebackend-vrtx.vercel.app'
+const base = 'http://localhost:3000'
 
-const ChatWidget = ({ siteURL, lang }) => {
+const ChatWidget = ({ siteURL, lang, apiKey, mail }) => {
+  // let  base = lang==='urdu'? 'https://nanivoice-backend-mocha.vercel.app':'https://justvoicebackend-vrtx.vercel.app'
+
+  const [verified, setVerified] = useState(true)
+
+  useEffect(() => {
+    const url = 'api-justautofy.vercel.app' + '/api/verify'
+    const checkAuth = async () => {
+      const owner = await fetch(url, {
+        method: 'POST',
+        body: JSON.stringify({
+          apiKey: apiKey,
+          siteURL: window.location.host,
+          productName: 'voicebot',
+          email: mail,
+        }),
+      })
+
+      if (owner.status === 200) {
+        setVerified(true)
+      }
+    }
+    checkAuth()
+    // handleAuth()
+  }, [])
+
+  // const base =
+  //   lang === 'urdu'
+  //     ? 'https://nanivoice-backend-six.vercel.app'
+  //     : 'https://justvoicebackend-vrtx.vercel.app'
+
   let urdu =
     'میں یہاں آپ کے سوالات میں مدد کرنے کے لئے نانی ڈاٹ پی کے اے آئی اسسٹنٹ ہوں. آپ مجھ سے ہماری مصنوعات اور خدمات کے بارے میں کچھ پوچھ سکتے ہیں.'
   let content =
@@ -62,16 +89,22 @@ const ChatWidget = ({ siteURL, lang }) => {
   }, [recordingBlob])
 
   const handleAudioRecordingComplete = async (audioBlob) => {
+    const userMsg = {
+      role: 'user',
+      content: 'typing...',
+    }
+    setMessagesArray((prevState) => [...prevState, userMsg])
+
     try {
       const formData = new FormData()
       formData.append('file', audioBlob, 'audio.wav')
       // formData.append('model', 'whisper-1')
       formData.append('language', 'en')
 
-      let newbase = 'http://localhost:3000'
-      let suffixURL = lang == 'ur' ? '/api/gcloud/gtest2' : '/api/voicechat'
+      let suffixURL =
+        lang == 'urdu' ? '/api/gcloud/speech2text' : '/api/voicechat'
       let voiceapi = base + suffixURL
-      // let voiceapi = newbase + '/api/gcloud/gtest2'
+      // let voiceapi = newbase + '/api/gcloud/speech2text'
 
       const response = await fetch(voiceapi, {
         method: 'POST',
@@ -80,18 +113,27 @@ const ChatWidget = ({ siteURL, lang }) => {
 
       if (response.ok) {
         const { text } = await response.json()
+        const filterMsgs = messagesArray.filter(
+          (msg) => msg.content !== 'typing...'
+        )
+        setMessagesArray((prevState) => [...filterMsgs])
         updateMessagesArray(text)
       } else {
         console.error('Failed to send audio to the API.')
       }
     } catch (error) {
+      // const { text } = await response.json()
+      const filterMsgs = messagesArray.filter(
+        (msg) => msg.content !== 'typing...'
+      )
+      setMessagesArray((prevState) => [...filterMsgs])
+
       console.error('Error sending audio to the API:', error)
     }
   }
 
   const requestVoice = async (textInput) => {
     const url = base + '/api/readvoice'
-    let voiceId = lang=='en' ? "" : ""
 
     try {
       const res = await fetch(url, {
@@ -99,7 +141,7 @@ const ChatWidget = ({ siteURL, lang }) => {
         body: JSON.stringify({
           text: textInput,
           voiceId:
-            lang == 'ur' ? 'IKne3meq5aSn9XLyUdCD' : 'EXAVITQu4vr4xnSDxMaL',
+            lang == 'urdu' ? 'ITzfpLru3rmUwQ0HH5ko' : 'EXAVITQu4vr4xnSDxMaL',
         }),
       })
 
@@ -121,7 +163,8 @@ const ChatWidget = ({ siteURL, lang }) => {
   useEffect(() => {
     if (
       messagesArray.length > 1 &&
-      messagesArray[messagesArray.length - 1].role !== 'system'
+      messagesArray[messagesArray.length - 1].role !== 'system' &&
+      messagesArray[messagesArray.length - 1].content !== 'typing...'
     ) {
       handleChatRequest()
     }
@@ -136,6 +179,11 @@ const ChatWidget = ({ siteURL, lang }) => {
   }
 
   const handleChatRequest = async () => {
+    const systemsmsg = {
+      role: 'system',
+      content: 'typing...',
+    }
+    setMessagesArray((prevState) => [...prevState, systemsmsg])
     const key = 'chat_memory'
     let convoSummary = Cookies.get(key) ? JSON.parse(Cookies.get(key)) : ''
     const aisummary = {
@@ -144,12 +192,15 @@ const ChatWidget = ({ siteURL, lang }) => {
     }
 
     try {
-      const obj = {
-        conversationId: Cookies.get('convoId') ? Cookies.get('convoId') : '1234',
+      let obj = {
+        conversationId: Cookies.get('convoId')
+          ? Cookies.get('convoId')
+          : '1234',
         textInput: messagesArray[messagesArray.length - 1].content,
         siteURL: siteURL,
       }
 
+      // const apiUrl = base + '/api/chatgpt/streamai'
       const apiUrl = base + '/api/chatgpt/openai'
 
       const response = await axios.post(apiUrl, {
@@ -162,29 +213,55 @@ const ChatWidget = ({ siteURL, lang }) => {
         Cookies.set('convoId', convoId)
       }
 
-      if (result.content.length > 0) {
-        setMessagesArray((prevState) => [...prevState, result])
+      console.log('result',result)
+
+      if (result.content?.length > 0) {
+        // setMessagesArray((prevState) => [...prevState, result])
+        // deleting loading msg and adding new msg
+        let newMessagesArray = messagesArray.filter(
+          (msg) => msg.content !== 'typing...'
+        )
+        setMessagesArray((prevState) => [...newMessagesArray, result])
         console.log('result')
         await requestVoice(result.content)
+
+        Cookies.remove(key)
+        Cookies.set(key, JSON.stringify(summary))
+      } else if (result.funcResult.length > 0) {
+        let newMessagesArray = messagesArray.filter(
+          (msg) => msg.content !== 'typing...'
+        )
+        console.log('heyyyyyyyy')
+        setMessagesArray((prevState) => [...newMessagesArray, result])
+        console.log('result')
 
         Cookies.remove(key)
         Cookies.set(key, JSON.stringify(summary))
       } else {
         setProducts(result.result)
 
-        setMessagesArray((prevState) => [...prevState, result])
+        let newMessagesArray = messagesArray.filter(
+          (msg) => msg.content !== 'typing...'
+        )
+        setMessagesArray((prevState) => [...newMessagesArray, result])
         Cookies.remove(key)
         Cookies.set(key, JSON.stringify(summary))
       }
     } catch (error) {
-      let urdu ='معذرت، میں آپ کے سوال کو سمجھنے کے قابل نہیں ہوں۔ دوبارہ کوشش کریں.'
+      let urdu =
+        'معذرت، میں آپ کے سوال کو سمجھنے کے قابل نہیں ہوں۔ دوبارہ کوشش کریں.'
       const result = {
         role: 'system',
         content:
-           lang=='en'? "Sorry, I am not able to understand your query. Please try again.":urdu,
+          lang == 'en'
+            ? 'Sorry, I am not able to understand your query. Please try again.'
+            : urdu,
       }
 
-      setMessagesArray((prevState) => [...prevState, result])
+      let newMessagesArray = messagesArray.filter(
+        (msg) => msg.content !== 'typing...'
+      )
+      setMessagesArray((prevState) => [...newMessagesArray, result])
       await requestVoice(result.content)
 
       console.error('Error:', error)
@@ -223,16 +300,23 @@ const ChatWidget = ({ siteURL, lang }) => {
         } justvoice__chat__main`}
       >
         <Header toggleChat={toggleChat} />
+
         <div className="justvoice__chat__x2b3f5h9c8">
-          <Body messages={messagesArray} />
+          {verified ? (
+            <Body messages={messagesArray} />
+          ) : (
+            <h3>Please Subscribe</h3>
+          )}
         </div>
-        <Input
-          prompt={prompt}
-          setPrompt={setPrompt}
-          handleStartRecording={handleStartRecording}
-          handleStopRecording={handleStopRecording}
-          isRecording={isRecording}
-        />
+        {verified && (
+          <Input
+            prompt={prompt}
+            setPrompt={setPrompt}
+            handleStartRecording={handleStartRecording}
+            handleStopRecording={handleStopRecording}
+            isRecording={isRecording}
+          />
+        )}
       </div>
     </div>
   )

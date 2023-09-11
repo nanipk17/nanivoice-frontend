@@ -5,13 +5,14 @@ import Chatbot from './components/ChatBot'
 import ChatWidget from './components/chat'
 // import PdfTextExtractor from './components/ExtractText';
 
-function App({ siteURL }) {
-  console.log('siteURL', siteURL)
+function App({ siteURL,apiKey,mail }) {
 
   return (
     <div>
       <ChatWidget
         siteURL={siteURL}
+        mail={mail}
+        apiKey={apiKey}
         lang={siteURL.length > 1 && siteURL === 'nani.pk' ? 'urdu' : 'en'}
       />
     </div>

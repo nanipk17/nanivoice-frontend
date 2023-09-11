@@ -56,7 +56,7 @@ const ChatbotTest = ({ siteURL }) => {
       formData.append('file', audioBlob, 'audio.wav')
       formData.append('language', 'en')
 
-      let voiceapi = base+ '/api/gcloud/gtest2'
+      let voiceapi = base + '/api/gcloud/speech2text'
       // let voiceapi = base+ '/api/gtest'
       // let voiceapi = base+ '/api/gcloud/speech2text'
 

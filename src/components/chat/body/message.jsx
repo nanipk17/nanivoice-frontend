@@ -1,7 +1,7 @@
 import React from 'react'
 
 const Message = (props) => {
-  const { sentBy, message } = props
+  const { sentBy, message, key,funcResult } = props
   return (
     <div
       className={`${
@@ -10,7 +10,13 @@ const Message = (props) => {
           : 'justvoice__chat__msg__bot'
       }`}
     >
-      { message}
+      {message?.length > 0 ? message : (
+        <div>
+          {funcResult?.map((m)=>(
+            <img src={m.image} className='w-[200px] h-[200px]' alt="" />
+          ))}
+        </div>
+      ) }
     </div>
   )
 }
