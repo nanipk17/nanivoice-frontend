@@ -5,10 +5,10 @@ body {
   font-family: -apple-system, BlinkMacSystemFont, Segoe UI, Roboto, Oxygen,
     Ubuntu, Cantarell, Fira Sans, Droid Sans, Helvetica Neue, sans-serif;
 }
-@import url("https://fonts.googleapis.com/css2?family=Poppins:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap");
+@import url('https://fonts.googleapis.com/css2?family=Poppins:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap');
 .justvoice__widget,
 .justvoice__widget #enter_msg {
-  font-family: "Poppins", sans-serif;
+  font-family: 'Poppins', sans-serif;
 }
 button {
   border: none;
@@ -88,7 +88,8 @@ button {
   padding-left: 1.5rem;
   padding-right: 1.5rem;
   border-radius: 0.375rem;
-  background-image: linear-gradient(to right, #2831dd, #08aff9);
+  background-image: #ff7043;
+  /* background-image: linear-gradient(to right, #2831dd, #08aff9); */
   color: #fff;
 }
 
@@ -175,7 +176,7 @@ button {
   padding: 1rem;
   justify-content: space-between;
   align-items: center;
-  background-image: linear-gradient(to right, #2831dd, #08aff9);
+  background-color: #ff7043;
 }
 .justvoice__chat__header__botname {
   display: flex;
@@ -240,7 +241,7 @@ button {
 }
 .justvoice__mic__icon {
   font-size: 1.5rem;
-  
+
   color: #8894ab;
 }
 
@@ -265,7 +266,6 @@ button {
   animation: pulse 1.5s infinite;
 }
 
-
 .justvoice__chat__down__chevron {
   font-size: 1.875rem;
 }
@@ -278,7 +278,7 @@ button {
   width: 4rem;
   height: 4rem;
   color: #ffffff;
-  background-image: linear-gradient(to right, #2831dd, #08aff9);
+  background-color: #ff7043;
 }
 .justvoice__send__icon {
   margin-left: 0.25rem;
@@ -288,7 +288,7 @@ button {
   font-size: 1.25rem;
 }
 .justvoice__chat__msg__user {
-  background-image: linear-gradient(to right, #2831dd, #08aff9);
+  background-color: #ff7043;
   margin-left: auto;
   color: white;
   padding: 0.75rem 1rem;
@@ -332,4 +332,22 @@ button {
 }
 .justvoice__alert__hide {
   transform: translateY(-100%);
+}
+
+.justvoice_chat_img {
+  width: 200px;
+  height: 200px;
+  margin-top: 4px;
+  margin-bottom: 4px;
+}
+
+.justvoice_media_body {
+  display: flex;
+  flex-direction: column;
+  padding: 15px;
+}
+
+.justvoice_media_head {
+  display: flex;
+  flex-direction: column;
 }

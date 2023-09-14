@@ -33,8 +33,8 @@ const Input = ({
           )}
         </div>
         <small className="justvoice__bottom__copyright">
-          <span>Powered by</span>{' '}
-          <a
+          {/* <span>Powered by</span>{' '} */}
+          {/* <a
             href="https://www.justautofy.com/products/justvoice"
             target="_blank"
           >
@@ -43,7 +43,7 @@ const Input = ({
               src="https://www.justautofy.com/assets/images/shared/logo-dark.svg"
               alt="img"
             />
-          </a>
+          </a> */}
         </small>
       </div>
     </div>

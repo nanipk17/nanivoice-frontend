@@ -34,13 +34,9 @@ const ChatWidget = ({ siteURL, lang, apiKey, mail }) => {
       }
     }
     checkAuth()
-    // handleAuth()
   }, [])
 
-  // const base =
-  //   lang === 'urdu'
-  //     ? 'https://nanivoice-backend-six.vercel.app'
-  //     : 'https://justvoicebackend-vrtx.vercel.app'
+
 
   let urdu =
     'میں یہاں آپ کے سوالات میں مدد کرنے کے لئے نانی ڈاٹ پی کے اے آئی اسسٹنٹ ہوں. آپ مجھ سے ہماری مصنوعات اور خدمات کے بارے میں کچھ پوچھ سکتے ہیں.'

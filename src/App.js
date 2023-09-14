@@ -5,8 +5,7 @@ import Chatbot from './components/ChatBot'
 import ChatWidget from './components/chat'
 // import PdfTextExtractor from './components/ExtractText';
 
-function App({ siteURL,apiKey,mail }) {
-
+function App({ siteURL, apiKey, mail }) {
   return (
     <div>
       <ChatWidget
